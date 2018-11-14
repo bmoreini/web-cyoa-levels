@@ -11,6 +11,10 @@ div{
     margin-left: 20%;
 }
 
+div #hide, #targets, #targets option {
+    display:none!Important;
+}
+
 p {
     border-radius: 5px;
     font-size: 25px;
