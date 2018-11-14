@@ -4,7 +4,6 @@ window.onload = start;
 
 function start() {
     setup();
-    // town();
     tollbooth();
 }
 
@@ -13,13 +12,21 @@ function story(text) {
     currentStoryElement.innerHTML = text;
 }
 
-function setOptions(options) {
+function setOptions(options,targets) {
     var dropdown = document.getElementById("choices");
     while (dropdown.options.length) {
         dropdown.remove(0);
     }
     for (var i = 0; i < options.length; i++) {
-        var option = new Option(options[i], options[i]);
+        var option = new Option(options[i]);
+        dropdown.options.add(option);
+    }
+    var dropdown = document.getElementById("targets");
+    while (dropdown.options.length) {
+        dropdown.remove(0);
+    }
+    for (var i = 0; i < options.length; i++) {
+        var option = new Option(targets[i]);
         dropdown.options.add(option);
     }
 }
@@ -29,7 +36,6 @@ function delayText(text, delay) {
     var index = 0;
     story("");
     var callback = function (text) {
-
         story(currentStoryElement.innerHTML  + text[index]+ "<br />"+ "<br />");
         index += 1;
         if (index >text.length-1){
@@ -43,13 +49,11 @@ function delayText(text, delay) {
 
 
 function setup() {
-    // setOptions();
-    setOptions(["test 1", "test 2", "test3"]); 
+    setOptions(["test 1", "test 2", "test3"],["l1s1","l1s2","l1s3"]);
     var buttonElement = document.getElementById("button1");
-    buttonElement.innerHTML = "What will you do?"; 
+    buttonElement.innerHTML = "What will you do?";
     buttonElement.onclick = function () {
-    var dropdown = document.getElementById("choices");
-    console.log(dropdown.value);
-    checkAnswers(dropdown.value);
-}
+        var dropdown = document.getElementById("choices");
+        checkAnswers(dropdown.value);
+    }
 }
