@@ -79,7 +79,7 @@ function momCantSeeIt() {
 
 // l1s4
 function meetMrNim() {
-	story("A devil in a red suit appears.  He says, \"I am Mr. Nim. You and I will count to 21.  You will start.  You may choose to count 1, 2 or 3 numbers in sequence.  If you are forced to say 21, you die; if I am, you may enter the Kingdom of Wisdom.\" How many numbers do you count?");
+	story("A devil in a red suit appears.  He says, <br><br> \"I am Mr. Nim. You and I will count to 21.  You will start.  <br><br>You may choose to count 1, 2 or 3 numbers in sequence. <br><br> If you are forced to say 21, you die; if I am forced to say 21, you may enter the Kingdom of Wisdom safely.\" <br><br>How many numbers do you count?");
 	data = ["1|l1s4","2|l1s4","3|l1s4"]
 	options = parseOptions(data);
 	targets = parseTargets(data);
