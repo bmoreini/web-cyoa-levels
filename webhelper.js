@@ -1,12 +1,5 @@
 var buttonElement = document.getElementById("button1");
 
-window.onload = start;
-
-function start() {
-    setup();
-    tollbooth();
-}
-
 function story(text) {
     var currentStoryElement = document.getElementById("currentStory");
     currentStoryElement.innerHTML = text;
@@ -51,7 +44,7 @@ function delayText(text, delay) {
 function setup() {
     setOptions(["test 1", "test 2", "test3"],["l1s1","l1s2","l1s3"]);
     var buttonElement = document.getElementById("button1");
-    buttonElement.innerHTML = "What will you do?";
+    buttonElement.innerHTML = "Select choice and click here.";
     buttonElement.onclick = function () {
         var dropdown = document.getElementById("choices");
         checkAnswers(dropdown.value);

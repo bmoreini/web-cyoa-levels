@@ -1,4 +1,10 @@
 // rpg-tollbooth.js
+window.onload = start;
+
+function start() {
+    setup();
+    tollbooth();
+}
 
 
 // core variables
@@ -20,6 +26,12 @@ function checkAnswers(answer) {  // Matches Scenes  - replace with yours
 	else if (answer == "Tell mom") {
 		momCantSeeIt();
 	}
+	else if (answer == "Pray for help") {
+		meetMrNim();
+	}	
+	else if (answer == "1" || answer =="2" || answer == "3") {
+		meetMrNim();	
+	}
 }
 
 function parseOptions(data){
@@ -38,31 +50,44 @@ function parseTargets(data){
 	return targets;
 }
 
+// l1s1
 function tollbooth() {
 	story("You are wandering along a road on a beautiful spring day, with green meadows and gentle rolling hills.  You don’t have a destination and you have plenty of time.\   \n Suddenly a tollbooth appears in front of you. There is a man in the booth waiting to speak to you.\ \nWhat do you do?");
-	data = ["Enter now|l1s2","Sleep on it|l1s3","Tell mom|l1s4"]
+	data = ["Enter now|l1s5","Sleep on it|l1s2","Tell mom|l1s3"]
 	options = parseOptions(data);
 	targets = parseTargets(data);
 	answer = setOptions(options,targets);
 }
 
+// l1s2
 function wildNightmares() {
 	story("You have wild nightmares.");
-	data = ["Enter now|l1s2","Tell mom|l1s4","[undefined]|l0s0"]
+	data = ["Enter now|l1s5","Tell mom|l1s3","Pray for help|l1s4"]
 	options = parseOptions(data);
 	targets = parseTargets(data);
 	answer = setOptions(options, targets);
 }
 
+// l1s3
 function momCantSeeIt() {
 	story("Mom can't see the tollbooth. She sends you to bed.");
-	data = ["Enter now|l1s2","Sleep on it|l1s5","[undefined]|l0s0"]
+	data = ["Enter now|l1s5","Sleep on it|l1s2","Pray for help|l1s4"]
 	options = parseOptions(data);
 	targets = parseTargets(data);
 	answer = setOptions(options, targets);
 }
 
-function enterKingdomOfWisdom(){  // FIRST SCENE - WELCOMES PLAYER
+// l1s4
+function meetMrNim() {
+	story("A devil in a red suit appears.  He says, \"I am Mr. Nim. You and I will count to 21.  You will start.  You may choose to count 1, 2 or 3 numbers in sequence.  If you are forced to say 21, you die; if I am, you may enter the Kingdom of Wisdom.\" How many numbers do you count?");
+	data = ["1|l1s4","2|l1s4","3|l1s4"]
+	options = parseOptions(data);
+	targets = parseTargets(data);
+	answer = setOptions(options, targets);
+}
+
+// l1s5
+function enterKingdomOfWisdom(){  
 	story("You see mountains and rivers!");
 	data = ["[undefined]|l1s5","[undefined]|l1s6","[undefined]|l1s7"]
 	options = parseOptions(data);
