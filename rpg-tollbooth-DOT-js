@@ -1,0 +1,157 @@
+// rpg-tollbooth.js
+
+window.onload = start;
+// Change this to match ID in your AirTable.
+const OPENING_SCENE_ID = 'recg6BnajGBk86VoE';
+
+function start() {
+    setup();
+	/** CHANGE THE FIRST FUNCTION FOR TESTING **/
+    getScene(OPENING_SCENE_ID);
+}
+
+function getScene(record_id) {
+  // Replace with your own AirTable API key.
+  // Normally, you will want to keep this private.
+  // This key will only be good for a couple of days.
+  const key = 'keywDn60rw1pPyqvh';
+  // Alter this to match your own AirTable base.
+  // URL format is
+  // https://api.airtable.com/v0/<BASE_ID>/<TABLE_NAME>/<RECORD_ID>?api_key=<YOUR_API_KEY>
+  // See airtable.com/api
+  const url = `https://api.airtable.com/v0/app7rQunR804ezTnG/Scenes/${record_id}?api_key=${key}`;
+
+  // Make GET request to AirTable base.
+  $.ajax({ url: url, type: 'GET' })
+    .done(function (data) {
+      // Once AJAX request returns data, we destructure
+      // it and store it in variables.
+      let choices = [];
+      let { title, story, delay } = data.fields;
+      // The array of strings is returned as a string by AirTable,
+      // so we need to parse it into an array.
+      if (story.includes("<br><br>")) {
+        story = story.split("<br><br>");
+      }
+      // Don't bother if the scene doesn't have any choices.
+      if (data.fields.choices) {
+        // Collect AirTable queries for every choice into an array.
+        for (let idx = 0; idx < data.fields.choices.length; idx++) {
+          choices.push($.ajax({
+            url: `https://api.airtable.com/v0/app7rQunR804ezTnG/Choices/${data.fields.choices[idx]}?api_key=${key}`,
+            type: 'GET'
+          }));
+        }
+        // Use Promise.all() to wait until every query in the array
+        // has been returned before proceeding.
+        Promise.all(choices)
+          .then(function (data) {
+            let targetArray = [];
+
+            for (let idx = 0; idx < data.length; idx++) {
+              // Destructure the necessary fields.
+              // targets is an array
+              let { choice, targets } = data[idx].fields;
+              targetArray.push({ choice: choice, target: targets[0] });
+            }
+            setOptions(targetArray);
+            displayStory(story, delay);
+          })
+          .catch(function (err) {
+            console.log(err);
+          });
+      } else {
+        displayStory(story, delay);
+        // No options available.
+        setOptions({});
+      }
+    })
+    .fail(function (err) {
+      console.log(err);
+    });
+}
+
+/*
+function checkAnswers(answer) {  // Matches Scenes  - replace with yours
+	if (answer == "Unpack it") {
+		unpackTollbooth();
+	} 
+	else if (answer == "First Time") {
+		meetMilo();
+	} 
+	else if (answer == "Sigh") {
+		goOn();
+	} 
+	else if (answer == "Sigh again") {
+		discoverTollbooth();
+	} 
+	else if (answer == "Second Life") {
+		discoverTollbooth();
+	} 
+	else if (answer == "Sleep on it") {
+		wildNightmares();
+	}
+	else if (answer == "Tell mom") {
+		momCantSeeIt();
+	}
+	else if (answer == "Enter now") {
+		enterKingdomOfWisdom();
+	}
+}
+
+var choices = [];
+
+function enterKingdomOfWisdom() { 
+  story("You reach into your pocket, and find a penny and give it to the man. <br><br>  He says, “Welcome to the Kingdom of Wisdom!” as you walk by the booth. <br><br>  Suddenly the landscape changes, and you see high, pointy mountains in the distance, and a forest directly ahead along the road as you walk.  You feel excited and scared at the same time.<br><br>   The road splits into three, and there is a signpost with three signs, each with a name and pointing to a road.  Pointing left says Words, pointing center says Numbers, and pointing right says Whatever. <br><br>Which road do you follow?");
+	choices = ["Left","Center","Right"];
+	answer = setOptions(choices);
+}
+function wildNightmares() {
+	story("You have horrible nightmares about what happens to people when they don’t make choices.  You find yourself in a corner, covered with dust and cobwebs, as your brain rots away.  You wake up in a cold sweat.  And there is that big box, in the same place it was before.  What do you do?");
+	choices = ["Unpack it","Tell Mom"," "];;
+	answer = setOptions(choices);
+}
+
+function momCantSeeIt() {
+	story("You tell mom and she comes to your room with you.  You point at the box.  She says she can’t see it.  You are very angry and frustrated and yell at her.  She sends you to bed and tells you to come out again when you are reasonable. What do you do now?");
+	choices = ["Unpack it","Sleep on it"," "];
+	answer = setOptions(choices);
+}
+
+
+function unpackTollbooth() {
+messages=["On top of the enclosing styrofoam, you find a folded paper that says \"READ ME FIRST!\" You open it, and read the following list of contents", "\"One (1) genuine turnpike tollbooth to be erected according to directions.\"","\"Assorted coins for use in paying tolls.\"","\"One (1) map, up to date and carefully drawn by master cartographers,depicting natural and man-made features.\"","\"One (1) book of rules and traffic regulations, which may not be bent or broken.\"", "And in smaller letters at the bottom it concludes:\"Results are not guaranteed, but if not perfectly satisfied, your wasted time will be refunded.\""]; 
+    delayText(messages, 2000);
+    choices = ["Assemble it", "Check for return address","Call the Bomb Squad"];
+	answer = setOptions(choices);
+}
+
+
+
+function meetMilo() {
+messages=["When you are in school you long to be out, and when you are out you long to be in. On the way you think about coming home, and coming home you think about going. Wherever you are you wish you were somewhere else, and when you get there you wonder why you bothered. Nothing really interests you—least of all the things that should.", "\"It seems to me that almost everything is a waste of time,\" you say out loud one day as you walk dejectedly home from school. \"I can't see the point in learning to solve useless problems, or subtracting turnips from turnips, or knowing where Ethiopia is or how to spell February.\"",
+	"And, since no one ever bothered to explain otherwise, you regard the process of seeking knowledge as the greatest waste of time of all."]; 
+    delayText(messages, 2000);
+    choices = ["Sigh"];
+	answer = setOptions(choices);
+}
+
+function goOn() {
+messages=["As you and your unhappy thoughts hurry along (for while you are never anxious to be where you are going, you like to get there as quickly as possible) it seems a great wonder that the world, which was so large, could sometimes feel so small and empty.", "\"And worst of all,\" you continue to say out loud, \"there's nothing for me to do, nowhere I'd care to go, and hardly anything worth seeing.\"","You punctuate this last thought with such a deep sigh that a house sparrow singing nearby stops and rushes home to be with his family.","Without stopping or looking up, you rush past the buildings and busy shops that line the street and in a few minutes reach home—dash through the lobby—hop onto the elevator—two, three, four, five, six, seven, eight, and off again—open the apartment door—rush into your room—flop dejectedly into a chair, and grumble softly, \"Another long afternoon.\""]; 
+    delayText(messages, 1000);
+    choices = ["Sigh again"];
+	answer = setOptions(choices);
+}
+
+function discoverTollbooth() {
+  story("You look glumly at all the things you own.  The books that are too much trouble to read, the tools you never learned to use, and the other games and toys and  bits and pieces scattered around you. The ATV you haven't taken out all year.<br><br>And then, to one side of the room, just next to your computer, you notice something you have certainly never seen before!<br><br>Who could POSSIBLY have left such an enormous package and such a strange one? For, while it is not quite square, it is definitely not round, and for its size it is larger than almost any other big package of smaller dimension that you've ever seen!<br><br>Attached to one side is a bright-blue envelope which says simply: <br><br>\"FOR MILO, WHO HAS PLENTY OF TIME.\"");
+	choices = ["Unpack it", "Sleep on it", "Tell mom"];
+	answer = setOptions(choices);
+}
+
+function tollbooth() {
+  story("You are boy named Milo and you live in a city and go to middle school.<br><br> You tend to not know what to do with yourself -- not just sometimes, but always. It's a big problem for you.");
+	choices = ["First Time","Second Life"];
+	answer = setOptions(choices);
+}
+*/
